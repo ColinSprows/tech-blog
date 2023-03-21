@@ -13,8 +13,11 @@
   <header>
     <ul>
       <li><a href="#">Home</a></li>
-      <li><a href="#">Dashboard</a></li>
-      <li><a href="#">Logout</a></li>
+      {{#if logged_in}}
+      <li><a id="logout">Logout</a></li>
+      {{else}}
+      <li><a href="/login">Login</a></li>
+      {{/if}}
     </ul>
     <h1>
       The Tech Blog
@@ -27,5 +30,8 @@
       
   </footer>
 </body>
+{{#if logged_in}}
+<script src="/js/logout.js"></script>
+{{/if}}
 
 </html>

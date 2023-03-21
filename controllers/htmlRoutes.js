@@ -2,11 +2,8 @@ const router = require('express').Router();
 const { User, blogPost, Comment } = require('../models');
 const auth = require('../utils/auth');
 
-// router.get('/', async (req, res) => {
-//   res.render('login');
-// });
-
 router.get('/', async (req, res) => {
+  console.log(req.session.logged_in)
   try {
     const postBoard = await blogPost.findAll({
       include: [{ model: User }]
@@ -15,7 +12,6 @@ router.get('/', async (req, res) => {
     const posts = postBoard.map((post) =>
       post.get({ plain: true })
     );
-
     res.render('homepage', {
       posts,
       logged_in: req.session.logged_in,
@@ -27,11 +23,10 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.logged_in) {
     res.redirect('/');
     return;
   }
-
   res.render('login');
 });
 

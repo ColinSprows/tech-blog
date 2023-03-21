@@ -64,7 +64,7 @@ router.post('/', (req, res) => {
             req.session.save(() => {
                 req.session.user_id = dbUserData.id;
                 req.session.username = dbUserData.username;
-                req.session.loggedIn = true;
+                req.session.logged_in = true;
 
                 res.json(dbUserData);
             });
@@ -90,16 +90,6 @@ router.post('/login', (req, res) => {
                 return;
             }
 
-            // req.session.save(() => {
-            //     req.session.user_id = dbUserData.id;
-            //     req.session.username = dbUserData.username;
-            //     req.session.loggedIn = true;
-
-            //     res.json({
-            //         user: dbUserData,
-            //         message: 'Holy smokes, you logged in!'
-            //     });
-            // });
             const validPassword = dbUserData.checkPassword(req.body.password);
 
             if (!validPassword) {
@@ -111,8 +101,8 @@ router.post('/login', (req, res) => {
             req.session.save(() => {
                 req.session.user_id = dbUserData.id;
                 req.session.username = dbUserData.username;
-                req.session.loggedIn = true;
-
+                req.session.logged_in = true;
+                // console.log(req.session)
                 res.json({
                     user: dbUserData,
                     message: 'Congrats, you logged in!'
@@ -122,13 +112,32 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-    if (req.session.loggedIn) {
+    if (req.session.logged_in) {
         req.session.destroy();
         res.status(204).json({ message: 'you are not logged in' });
     } else {
         res.status(404).json({ message: 'you are not logged in' });
     }
 
+});
+
+router.post('/', async (req, res) => {
+    try {
+      const dbUserData = await User.create({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+      });
+  
+      req.session.save(() => {
+        req.session.loggedIn = true;
+  
+        res.status(200).json(dbUserData);
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
 });
 
 module.exports = router;
